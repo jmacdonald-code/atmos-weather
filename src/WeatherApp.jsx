@@ -912,7 +912,7 @@ export default function WeatherApp() {
                     <DataReadout label="Sunrise" value={formatUnixTime(weather.sys.sunrise, weather.timezone || 0)} variant="accent" />
                     <DataReadout label="Sunset" value={formatUnixTime(weather.sys.sunset, weather.timezone || 0)} variant="accent" />
                     <DataReadout label="Daylight Left" value={getDaylightLeft(weather.sys.sunset)} variant="accent" />
-                    <DataReadout label="Temp Range" value={`${displayTemp(weather.main.temp_min || weather.main.temp - 2)}° / ${displayTemp(weather.main.temp_max || weather.main.temp + 2)}°`} variant="accent" />
+                    <DataReadout label="Temp Range" value={<><span>{displayTemp(weather.main.temp_min || weather.main.temp - 2)}° <span style={{fontWeight:700, fontSize:"60%"}}>Min</span></span><br/><span>{displayTemp(weather.main.temp_max || weather.main.temp + 2)}° <span style={{fontWeight:700, fontSize:"60%"}}>Max</span></span></>} variant="accent" />
                   </div>
                 </div>
 
