@@ -264,6 +264,20 @@ function getThemeKey(weatherMain, icon) {
 
 function ScanLines() { return null; }
 
+function formatUnixTime(unix, timezone = 0) {
+  const date = new Date((unix + timezone) * 1000);
+  return date.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: "UTC" });
+}
+
+function getDaylightLeft(sunset, timezone = 0) {
+  const now = Math.floor(Date.now() / 1000);
+  const diff = sunset - now;
+  if (diff <= 0) return "0h 0m";
+  const hours = Math.floor(diff / 3600);
+  const mins = Math.floor((diff % 3600) / 60);
+  return `${hours}h ${mins}m`;
+}
+
 function GridOverlay() { return null; }
 
 function Particles() { return null; }
@@ -373,7 +387,7 @@ function DataReadout({ label, value, unit, variant = "accent" }) {
       background: bg, borderRadius: "20px",
       padding: "24px", position: "relative",
       display: "flex", flexDirection: "column", justifyContent: "space-between",
-      minHeight: "160px",
+      
     }}>
       <div className="data-card-label" style={{
         fontSize: "18px", fontFamily: "'Inter', sans-serif", fontWeight: 900,
@@ -409,7 +423,7 @@ function WindReadout({ speed, deg, unit, variant = "accent" }) {
       background: bg, borderRadius: "20px",
       padding: "24px", position: "relative",
       display: "flex", flexDirection: "column", justifyContent: "space-between",
-      minHeight: "160px",
+      
     }}>
       <div className="data-card-label" style={{
         fontSize: "18px", fontFamily: "'Inter', sans-serif", fontWeight: 900,
@@ -598,13 +612,13 @@ export default function WeatherApp() {
 
   const loadDemoData = useCallback((city) => {
     const demos = {
-      sunny: { main: "Clear", icon: "01d", temp: 24, feels: 26, humidity: 45, wind: 12, windDeg: 180, pressure: 1018, city: "Barcelona" },
-      rain: { main: "Rain", icon: "09d", temp: 11, feels: 8, humidity: 82, wind: 24, windDeg: 225, pressure: 1005, city: "Glasgow" },
-      snow: { main: "Snow", icon: "13d", temp: -3, feels: -8, humidity: 90, wind: 15, windDeg: 315, pressure: 1020, city: "Reykjavik" },
-      cloudy: { main: "Clouds", icon: "04d", temp: 15, feels: 13, humidity: 65, wind: 18, windDeg: 270, pressure: 1012, city: "London" },
-      storm: { main: "Thunderstorm", icon: "11d", temp: 19, feels: 18, humidity: 78, wind: 35, windDeg: 90, pressure: 998, city: "Miami" },
-      night: { main: "Clear", icon: "01n", temp: 18, feels: 17, humidity: 55, wind: 8, windDeg: 45, pressure: 1015, city: "Tokyo" },
-      mist: { main: "Mist", icon: "50d", temp: 8, feels: 6, humidity: 95, wind: 5, windDeg: 160, pressure: 1010, city: "Edinburgh" },
+      sunny: { main: "Clear", icon: "01d", temp: 24, feels: 26, humidity: 45, wind: 12, windDeg: 180, pressure: 1018, city: "Barcelona", sunrise: Math.floor(Date.now()/1000) - 25200, sunset: Math.floor(Date.now()/1000) + 18000 },
+      rain: { main: "Rain", icon: "09d", temp: 11, feels: 8, humidity: 82, wind: 24, windDeg: 225, pressure: 1005, city: "Glasgow", sunrise: Math.floor(Date.now()/1000) - 21600, sunset: Math.floor(Date.now()/1000) + 14400 },
+      snow: { main: "Snow", icon: "13d", temp: -3, feels: -8, humidity: 90, wind: 15, windDeg: 315, pressure: 1020, city: "Reykjavik", sunrise: Math.floor(Date.now()/1000) - 18000, sunset: Math.floor(Date.now()/1000) + 10800 },
+      cloudy: { main: "Clouds", icon: "04d", temp: 15, feels: 13, humidity: 65, wind: 18, windDeg: 270, pressure: 1012, city: "London", sunrise: Math.floor(Date.now()/1000) - 22000, sunset: Math.floor(Date.now()/1000) + 15000 },
+      storm: { main: "Thunderstorm", icon: "11d", temp: 19, feels: 18, humidity: 78, wind: 35, windDeg: 90, pressure: 998, city: "Miami", sunrise: Math.floor(Date.now()/1000) - 27000, sunset: Math.floor(Date.now()/1000) + 16200 },
+      night: { main: "Clear", icon: "01n", temp: 18, feels: 17, humidity: 55, wind: 8, windDeg: 45, pressure: 1015, city: "Tokyo", sunrise: Math.floor(Date.now()/1000) + 28800, sunset: Math.floor(Date.now()/1000) - 7200 },
+      mist: { main: "Mist", icon: "50d", temp: 8, feels: 6, humidity: 95, wind: 5, windDeg: 160, pressure: 1010, city: "Edinburgh", sunrise: Math.floor(Date.now()/1000) - 21000, sunset: Math.floor(Date.now()/1000) + 14000 },
     };
     const cityLower = city.toLowerCase();
     let demo;
@@ -622,9 +636,9 @@ export default function WeatherApp() {
     }
 
     setWeather({
-      name: demo.city, sys: { country: "XX" },
+      name: demo.city, sys: { country: "XX", sunrise: demo.sunrise, sunset: demo.sunset },
       weather: [{ main: demo.main, description: demo.main.toLowerCase(), icon: demo.icon }],
-      main: { temp: demo.temp, feels_like: demo.feels, humidity: demo.humidity, pressure: demo.pressure },
+      main: { temp: demo.temp, feels_like: demo.feels, humidity: demo.humidity, pressure: demo.pressure, temp_min: demo.temp - 2, temp_max: demo.temp + 3 },
       wind: { speed: demo.wind, deg: demo.windDeg },
     });
 
@@ -721,6 +735,7 @@ export default function WeatherApp() {
         .weather-icon-hero { width: min(100px, 18vw); height: min(100px, 18vw); }
 
         .data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; }
+        .data-grid > * { aspect-ratio: auto; min-height: 140px; }
         .forecast-row { display: flex; gap: 12px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
         .section-label { font-size: 11px; font-family: 'Inter', sans-serif; font-weight: 700; color: #000000; margin-bottom: 10px; padding-left: 2px; }
         .header-text { font-size: 36px; }
@@ -768,8 +783,8 @@ export default function WeatherApp() {
           .main-mid .forecast-row, .main-right .forecast-row { flex: 1; }
           .main-mid .forecast-row > *, .main-right .forecast-row > * { flex: 1; min-height: 0; }
           .forecast-row { flex-direction: column; gap: 12px; overflow-x: visible; }
-          .data-grid { grid-template-columns: 1fr 1fr; gap: 16px; flex: 1; display: grid; }
-          .data-grid > * { min-height: 0; }
+          .data-grid { grid-template-columns: repeat(4, 1fr); gap: 16px; flex: 1; display: grid; }
+          .data-grid > * { min-height: 0; aspect-ratio: 1; }
           .data-card-value { font-size: 56px !important; }
           .data-card-label { font-size: 20px !important; }
           .data-card-unit { font-size: 20px !important; }
@@ -894,6 +909,10 @@ export default function WeatherApp() {
                     <DataReadout label="Humidity" value={weather.main.humidity} unit="%" variant="accent" />
                     <WindReadout speed={displayWind(weather.wind.speed)} deg={weather.wind.deg} unit={windUnit} variant="accent" />
                     <DataReadout label="Pressure" value={displayPressure(weather.main.pressure)} unit={pressureUnit} variant="accent" />
+                    <DataReadout label="Sunrise" value={formatUnixTime(weather.sys.sunrise, weather.timezone || 0)} variant="accent" />
+                    <DataReadout label="Sunset" value={formatUnixTime(weather.sys.sunset, weather.timezone || 0)} variant="accent" />
+                    <DataReadout label="Daylight Left" value={getDaylightLeft(weather.sys.sunset)} variant="accent" />
+                    <DataReadout label="Temp Range" value={`${displayTemp(weather.main.temp_min || weather.main.temp - 2)}° / ${displayTemp(weather.main.temp_max || weather.main.temp + 2)}°`} variant="accent" />
                   </div>
                 </div>
 
