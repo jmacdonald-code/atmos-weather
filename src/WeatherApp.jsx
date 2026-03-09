@@ -207,6 +207,9 @@ function WeatherIcon({ type, size = 28, color = "#000000" }) {
         row.split("").map((cell, x) => {
           const isActive = cell === "0";
           const anim = getAnimation(type, x, y, isActive);
+          const style = Object.keys(anim).length > 0 
+            ? { ...anim, transformBox: "fill-box", transformOrigin: "center" }
+            : {};
           return (
             <circle
               key={`${x}-${y}`}
@@ -214,7 +217,7 @@ function WeatherIcon({ type, size = 28, color = "#000000" }) {
               cy={y + 0.5}
               r={isActive ? dotR : dotR * 0.3}
               fill={isActive ? color : inactiveColor}
-              style={anim}
+              style={style}
             />
           );
         })
@@ -778,37 +781,37 @@ export default function WeatherApp() {
         @keyframes fadeSlideIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
 
         @keyframes sunPulse {
-          0%, 100% { opacity: 1; r: 0.35; }
-          50% { opacity: 0.5; r: 0.2; }
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.3; }
         }
         @keyframes cloudDrift {
-          0%, 100% { transform: translateX(0); }
-          50% { transform: translateX(0.3px); }
+          0%, 100% { transform: translateX(0px); }
+          50% { transform: translateX(2px); }
         }
         @keyframes rainFall {
-          0% { opacity: 1; transform: translateY(0); }
+          0% { opacity: 1; transform: translateY(0px); }
           70% { opacity: 1; }
-          100% { opacity: 0; transform: translateY(1.2px); }
+          100% { opacity: 0; transform: translateY(4px); }
         }
         @keyframes lightningFlash {
-          0%, 45% { opacity: 0.15; }
+          0%, 45% { opacity: 0.1; }
           46%, 52% { opacity: 1; }
-          53%, 100% { opacity: 0.15; }
+          53%, 100% { opacity: 0.1; }
         }
         @keyframes snowFloat {
-          0%, 100% { transform: translate(0, 0); opacity: 1; }
-          25% { transform: translate(0.2px, 0.3px); opacity: 0.6; }
-          50% { transform: translate(-0.1px, 0.5px); opacity: 1; }
-          75% { transform: translate(0.15px, 0.2px); opacity: 0.7; }
+          0%, 100% { transform: translate(0px, 0px); opacity: 1; }
+          25% { transform: translate(2px, 2px); opacity: 0.5; }
+          50% { transform: translate(-1px, 3px); opacity: 1; }
+          75% { transform: translate(1px, 1px); opacity: 0.5; }
         }
         @keyframes mistFade {
           0%, 100% { opacity: 1; }
-          40% { opacity: 0.25; }
-          60% { opacity: 0.25; }
+          40% { opacity: 0.2; }
+          60% { opacity: 0.2; }
         }
         @keyframes moonBreathe {
           0%, 100% { opacity: 1; }
-          50% { opacity: 0.55; }
+          50% { opacity: 0.4; }
         }
       `}</style>
 
