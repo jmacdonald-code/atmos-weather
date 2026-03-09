@@ -119,22 +119,105 @@ function WeatherIcon({ type, size = 28, color = "#000000" }) {
     ],
   };
 
+  // Animation config per weather type
+  const getAnimation = (weatherType, x, y, isActive) => {
+    if (!isActive) return {};
+    const cx = 6, cy = 6;
+    const dist = Math.sqrt((x - cx) ** 2 + (y - cy) ** 2);
+
+    switch (weatherType) {
+      case "clear": {
+        // Radial pulse outward from center
+        return {
+          animation: `sunPulse 3s ease-in-out infinite`,
+          animationDelay: `${dist * 0.15}s`,
+        };
+      }
+      case "clouds": {
+        // Gentle lateral drift
+        return {
+          animation: `cloudDrift 4s ease-in-out infinite`,
+          animationDelay: `${x * 0.12}s`,
+        };
+      }
+      case "rain": {
+        // Rain dots below row 5 fall, cloud dots stay
+        if (y > 5) {
+          return {
+            animation: `rainFall 0.8s linear infinite`,
+            animationDelay: `${(x * 0.15 + y * 0.1) % 0.8}s`,
+          };
+        }
+        return {};
+      }
+      case "drizzle": {
+        if (y > 5) {
+          return {
+            animation: `rainFall 1.4s linear infinite`,
+            animationDelay: `${(x * 0.2 + y * 0.15) % 1.4}s`,
+          };
+        }
+        return {};
+      }
+      case "thunderstorm": {
+        // Lightning dots flash
+        if (y > 5) {
+          return {
+            animation: `lightningFlash 0.4s steps(1) infinite`,
+            animationDelay: `${Math.random() * 2}s`,
+          };
+        }
+        return {};
+      }
+      case "snow": {
+        if (y > 5) {
+          return {
+            animation: `snowFloat 3s ease-in-out infinite`,
+            animationDelay: `${(x * 0.3 + y * 0.2)}s`,
+          };
+        }
+        return {};
+      }
+      case "mist": {
+        // Rows fade in waves
+        return {
+          animation: `mistFade 4s ease-in-out infinite`,
+          animationDelay: `${y * 0.25}s`,
+        };
+      }
+      case "night_clear": {
+        // Gentle breathing glow
+        return {
+          animation: `moonBreathe 5s ease-in-out infinite`,
+          animationDelay: `${dist * 0.2}s`,
+        };
+      }
+      default:
+        return {};
+    }
+  };
+
   const grid = shapes[type] || shapes.clouds;
-  const cellSize = 1;
   const viewBox = `0 0 ${gridSize} ${gridSize}`;
+  const inactiveColor = color === "#000000" ? "rgba(0,0,0,0.1)" : "rgba(255,255,255,0.15)";
 
   return (
     <svg width={size} height={size} viewBox={viewBox} xmlns="http://www.w3.org/2000/svg">
       {grid.map((row, y) =>
-        row.split("").map((cell, x) => (
-          <circle
-            key={`${x}-${y}`}
-            cx={x + 0.5}
-            cy={y + 0.5}
-            r={cell === "0" ? dotR : dotR * 0.3}
-            fill={cell === "0" ? color : (color === "#000000" ? "rgba(0,0,0,0.1)" : "rgba(255,255,255,0.15)")}
-          />
-        ))
+        row.split("").map((cell, x) => {
+          const isActive = cell === "0";
+          const anim = getAnimation(type, x, y, isActive);
+          return (
+            <circle
+              key={`${x}-${y}`}
+              cx={x + 0.5}
+              cy={y + 0.5}
+              r={isActive ? dotR : dotR * 0.3}
+              fill={isActive ? color : inactiveColor}
+              style={anim}
+            />
+          );
+        })
       )}
     </svg>
   );
@@ -693,6 +776,40 @@ export default function WeatherApp() {
 
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
         @keyframes fadeSlideIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+        @keyframes sunPulse {
+          0%, 100% { opacity: 1; r: 0.35; }
+          50% { opacity: 0.5; r: 0.2; }
+        }
+        @keyframes cloudDrift {
+          0%, 100% { transform: translateX(0); }
+          50% { transform: translateX(0.3px); }
+        }
+        @keyframes rainFall {
+          0% { opacity: 1; transform: translateY(0); }
+          70% { opacity: 1; }
+          100% { opacity: 0; transform: translateY(1.2px); }
+        }
+        @keyframes lightningFlash {
+          0%, 45% { opacity: 0.15; }
+          46%, 52% { opacity: 1; }
+          53%, 100% { opacity: 0.15; }
+        }
+        @keyframes snowFloat {
+          0%, 100% { transform: translate(0, 0); opacity: 1; }
+          25% { transform: translate(0.2px, 0.3px); opacity: 0.6; }
+          50% { transform: translate(-0.1px, 0.5px); opacity: 1; }
+          75% { transform: translate(0.15px, 0.2px); opacity: 0.7; }
+        }
+        @keyframes mistFade {
+          0%, 100% { opacity: 1; }
+          40% { opacity: 0.25; }
+          60% { opacity: 0.25; }
+        }
+        @keyframes moonBreathe {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.55; }
+        }
       `}</style>
 
       <div className="outer-wrap" style={{
