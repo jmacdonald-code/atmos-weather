@@ -296,19 +296,19 @@ function StatusBar({ theme }) {
     }}>
       <div className="header-text" style={{
         fontFamily: "'Inter', sans-serif",
-        fontWeight: 900,
+        fontWeight: 700,
         color: "#000000",
         lineHeight: 1.1,
       }}>Atmos</div>
       <div className="header-text" style={{
         fontFamily: "'Inter', sans-serif",
-        fontWeight: 900,
+        fontWeight: 700,
         color: "#999999",
         lineHeight: 1.1,
       }}>Weather System</div>
       <div className="header-text" style={{
         fontFamily: "'Inter', sans-serif",
-        fontWeight: 900,
+        fontWeight: 700,
         color: "#000000",
         marginTop: "4px",
       }}>{ts}</div>
@@ -390,11 +390,11 @@ function DataReadout({ label, value, unit, variant = "accent" }) {
       
     }}>
       <div className="data-card-label" style={{
-        fontSize: "18px", fontFamily: "'Inter', sans-serif", fontWeight: 900,
+        fontSize: "18px", fontFamily: "'Inter', sans-serif", fontWeight: 700,
         color: textColor, lineHeight: 1.2,
       }}>{label}</div>
       <div className="data-card-value" style={{
-        fontSize: "42px", fontWeight: 900, color: textColor,
+        fontSize: "42px", fontWeight: 700, color: textColor,
         fontFamily: "'Inter', sans-serif", lineHeight: 1,
       }}>
         {value}
@@ -426,7 +426,7 @@ function WindReadout({ speed, deg, unit, variant = "accent" }) {
       
     }}>
       <div className="data-card-label" style={{
-        fontSize: "18px", fontFamily: "'Inter', sans-serif", fontWeight: 900,
+        fontSize: "18px", fontFamily: "'Inter', sans-serif", fontWeight: 700,
         color: textColor, lineHeight: 1.2,
       }}>Wind</div>
       <div>
@@ -434,7 +434,7 @@ function WindReadout({ speed, deg, unit, variant = "accent" }) {
           display: "flex", alignItems: "center", gap: "10px",
         }}>
           <div className="data-card-value" style={{
-            fontSize: "42px", fontWeight: 900, color: textColor,
+            fontSize: "42px", fontWeight: 700, color: textColor,
             fontFamily: "'Inter', sans-serif", lineHeight: 1,
           }}>
             {speed}
@@ -449,7 +449,7 @@ function WindReadout({ speed, deg, unit, variant = "accent" }) {
             <polygon points="14,2 8,24 14,19 20,24" fill={textColor} />
           </svg>
           <span className="wind-compass" style={{
-            fontSize: "24px", fontWeight: 900, color: textColor,
+            fontSize: "24px", fontWeight: 700, color: textColor,
             fontFamily: "'Inter', sans-serif",
           }}>{compass}</span>
         </div>
@@ -470,12 +470,12 @@ function ForecastDay({ day, theme, displayTemp }) {
       minWidth: "80px", minHeight: "180px", flex: 1,
     }}>
       <span style={{
-        fontSize: "16px", fontFamily: "'Inter', sans-serif", fontWeight: 900,
+        fontSize: "16px", fontFamily: "'Inter', sans-serif", fontWeight: 700,
         color: "#000000",
       }}>{dayName}</span>
       <WeatherIcon type={iconKey} size={48} color="#000000" />
       <span style={{
-        fontSize: "28px", fontWeight: 900, color: "#000000",
+        fontSize: "28px", fontWeight: 700, color: "#000000",
         fontFamily: "'Inter', sans-serif",
       }}>{displayTemp(day.main.temp)}°</span>
     </div>
@@ -494,12 +494,12 @@ function HourlyBlock({ entry, displayTemp }) {
       minWidth: "80px", minHeight: "180px", flex: 1,
     }}>
       <span style={{
-        fontSize: "16px", fontFamily: "'Inter', sans-serif", fontWeight: 900,
+        fontSize: "16px", fontFamily: "'Inter', sans-serif", fontWeight: 700,
         color: "#000000",
       }}>{hour}</span>
       <WeatherIcon type={iconKey} size={48} color="#000000" />
       <span style={{
-        fontSize: "28px", fontWeight: 900, color: "#000000",
+        fontSize: "28px", fontWeight: 700, color: "#000000",
         fontFamily: "'Inter', sans-serif",
       }}>{displayTemp(entry.main.temp)}°</span>
     </div>
@@ -725,7 +725,7 @@ export default function WeatherApp() {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html, body { height: 100%; overflow: auto; -webkit-overflow-scrolling: touch; }
         ::placeholder { color: #999999; font-family: 'Inter', sans-serif; font-weight: 600; }
